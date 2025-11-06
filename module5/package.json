@@ -1,5 +1,5 @@
 {
-  "name": "module3-smart-contract-testing",
+  "name": "module5-smart-contract-security",
   "version": "1.0.0",
   "devDependencies": {
     "@nomicfoundation/hardhat-network-helpers": "^1.1.0",

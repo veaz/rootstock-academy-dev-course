@@ -1,5 +1,5 @@
 {
-  "name": "module1",
+  "name": "module3-write-smart-contracts",
   "version": "1.0.0",
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^0.15.13",

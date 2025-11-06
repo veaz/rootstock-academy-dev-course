@@ -1,5 +1,5 @@
 {
-  "name": "module2",
+  "name": "module4-smart-contract-testing",
   "version": "1.0.0",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",
