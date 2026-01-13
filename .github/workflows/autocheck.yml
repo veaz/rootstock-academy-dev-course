@@ -130,6 +130,14 @@ jobs:
             cp ${MODULE}/hardhat.config.ts project/hardhat.config.ts
             
             echo "Project structure ready for module6."
+
+          elif [ "$MODULE" = "module7" ]; then
+            echo "Module 7 detected: Using verification assessment flow"
+            
+            echo "No project setup needed for module7."
+            echo "Will validate assessment file directly from student's submission."
+            
+            echo "Project structure ready for module7."
             
           else
             echo "ERROR: Module '$MODULE' does not have an evaluation flow configured."
@@ -172,6 +180,25 @@ jobs:
             cd ..
           fi
 
+          # Module 7: Copy assessment file to reports
+          if [ "$MODULE" = "module7" ]; then
+            echo "Module 7: Reading assessment file..."
+            
+            ASSESSMENT_FILE="module7/assessment/commands-and-outputs.md"
+            
+            if [ -f "$ASSESSMENT_FILE" ]; then
+              cp "$ASSESSMENT_FILE" reports/module7-assessment.md
+              echo "Module 7: Assessment file copied to reports"
+            else
+              echo "ERROR: Assessment file not found at $ASSESSMENT_FILE"
+              echo "# Assessment File Not Found" > reports/module7-assessment.md
+              echo "" >> reports/module7-assessment.md
+              echo "The file \`assessment/commands-and-outputs.md\` was not found in your submission." >> reports/module7-assessment.md
+              echo "" >> reports/module7-assessment.md
+              echo "Please make sure you have completed the assessment file and included it in your PR." >> reports/module7-assessment.md
+            fi
+          fi
+
           if [ -f "project/foundry.toml" ]; then
             echo "Running Foundry tests..."
             cd project
@@ -181,8 +208,8 @@ jobs:
             cd ..
           fi
           
-      # 8. Post detailed feedback as a PR comment (last 50 log lines)  
-      - name: Post detailed feedback (Hardhat + Foundry)
+      # 8. Post detailed feedback as a PR comment  
+      - name: Post detailed feedback (Hardhat + Foundry + Assessment)
         if: always()
         uses: actions/github-script@v7 # TODO Replace with specific commit
         env:
@@ -191,60 +218,95 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            let hardhatOutput = '';
-            let foundryOutput = '';
+            const moduleName = process.env.MODULE_NAME;
+            
+            let body = '';
 
-            // Read and clean Hardhat output (include test results and errors, skip gas tables)
-            if (fs.existsSync('reports/hardhat-output.txt')) {
-              const hhLines = fs.readFileSync('reports/hardhat-output.txt', 'utf8').split('\n');
+            // Module 7: Show assessment file content
+            if (moduleName === 'module7') {
+              body = `### Verification Assessment (${moduleName}):\n\n`;
               
-              let endIndex = hhLines.length - 1;
-              
-              let hasFailures = false;
-              let testSummaryEndIndex = -1;
-              
-              for (let i = 0; i < hhLines.length; i++) {
-                if (hhLines[i].includes('passing') || hhLines[i].includes('failing')) {
-                  testSummaryEndIndex = i;
-                  if (hhLines[i].includes('failing')) {
-                    hasFailures = true;
-                  }
+              if (fs.existsSync('reports/module7-assessment.md')) {
+                const assessmentContent = fs.readFileSync('reports/module7-assessment.md', 'utf8');
+                
+                // Check if URLs are filled in (not placeholders)
+                const hasValidUrls = !assessmentContent.includes('YOUR_EXPLORER_URL_HERE');
+                const hasNotes = !assessmentContent.includes('YOUR_NOTES_HERE') || assessmentContent.split('YOUR_NOTES_HERE').length < 2;
+                
+                if (hasValidUrls) {
+                  body += `**Assessment file contains contract URLs**\n\n`;
+                } else {
+                  body += `**Warning**: Assessment file still contains placeholder URLs. Please fill in your verified contract URLs.\n\n`;
                 }
-              }
-              
-              if (hasFailures) {
-                for (let i = testSummaryEndIndex; i < hhLines.length; i++) {
-                  if (hhLines[i].includes('·') || hhLines[i].includes('│') || hhLines[i].includes('Solidity and Network Configuration')) {
-                    endIndex = i - 1;
-                    break;
-                  }
-                }
+                
+                body += `---\n\n`;
+                body += `#### Student's Submission:\n\n`;
+                body += assessmentContent;
+                body += `\n\n---\n\n`;
+                body += `> **Note for reviewers**: Please verify the Explorer URLs are valid and contracts are actually verified on RSK Testnet.`;
               } else {
-                endIndex = testSummaryEndIndex;
+                body += `**Error**: Assessment file not found.\n\n`;
+                body += `Please make sure you have:\n`;
+                body += `1. Completed the \`assessment/commands-and-outputs.md\` file\n`;
+                body += `2. Included it in your PR submission\n`;
               }
-              
-              const cleanLines = hhLines.slice(0, endIndex + 1);
-              hardhatOutput = cleanLines.join('\n').trim();
-            }
+            } else {
+              // Other modules: Show test results
+              let hardhatOutput = '';
+              let foundryOutput = '';
 
-            // Read last 50 lines of Foundry output (if exists)
-            if (fs.existsSync('reports/foundry-output.txt')) {
-              const fLines = fs.readFileSync('reports/foundry-output.txt', 'utf8').split('\n');
-              foundryOutput = fLines.slice(-50).join('\n');
-            }
+              // Read and clean Hardhat output (include test results and errors, skip gas tables)
+              if (fs.existsSync('reports/hardhat-output.txt')) {
+                const hhLines = fs.readFileSync('reports/hardhat-output.txt', 'utf8').split('\n');
+                
+                let endIndex = hhLines.length - 1;
+                
+                let hasFailures = false;
+                let testSummaryEndIndex = -1;
+                
+                for (let i = 0; i < hhLines.length; i++) {
+                  if (hhLines[i].includes('passing') || hhLines[i].includes('failing')) {
+                    testSummaryEndIndex = i;
+                    if (hhLines[i].includes('failing')) {
+                      hasFailures = true;
+                    }
+                  }
+                }
+                
+                if (hasFailures) {
+                  for (let i = testSummaryEndIndex; i < hhLines.length; i++) {
+                    if (hhLines[i].includes('·') || hhLines[i].includes('│') || hhLines[i].includes('Solidity and Network Configuration')) {
+                      endIndex = i - 1;
+                      break;
+                    }
+                  }
+                } else {
+                  endIndex = testSummaryEndIndex;
+                }
+                
+                const cleanLines = hhLines.slice(0, endIndex + 1);
+                hardhatOutput = cleanLines.join('\n').trim();
+              }
 
-            let body = `### Test Results (${process.env.MODULE_NAME}):`;
+              // Read last 50 lines of Foundry output (if exists)
+              if (fs.existsSync('reports/foundry-output.txt')) {
+                const fLines = fs.readFileSync('reports/foundry-output.txt', 'utf8').split('\n');
+                foundryOutput = fLines.slice(-50).join('\n');
+              }
 
-            if (hardhatOutput) {
-              body += `\n\n#### Hardhat:\n\`\`\`\n${hardhatOutput}\n\`\`\``;
-            }
+              body = `### 🧪 Test Results (${moduleName}):`;
 
-            if (foundryOutput) {
-              body += `\n\n#### Foundry:\n\`\`\`\n${foundryOutput}\n\`\`\``;
-            }
+              if (hardhatOutput) {
+                body += `\n\n#### Hardhat:\n\`\`\`\n${hardhatOutput}\n\`\`\``;
+              }
 
-            if (!hardhatOutput && !foundryOutput) {
-              body += '\n\nNo test output found. Something went wrong with the execution.';
+              if (foundryOutput) {
+                body += `\n\n#### Foundry:\n\`\`\`\n${foundryOutput}\n\`\`\``;
+              }
+
+              if (!hardhatOutput && !foundryOutput) {
+                body += '\n\n❌ No test output found. Something went wrong with the execution.';
+              }
             }
 
             await github.rest.issues.createComment({

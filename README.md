@@ -49,6 +49,15 @@
   <li><a href="#module-6-submission-guidelines">Submission Guidelines</a></li>
 </ol>
 </details>
+<details>
+<summary> <a href="#module-7-verify-smart-contracts">Module 7: Verify Smart Contracts</a></summary>
+<ol>
+  <li><a href="#module-7-overview">Overview</a></li>
+  <li><a href="#module-7-exercise">Exercise</a></li>
+  <li><a href="#module-7-verification-process">Verification Process</a></li>
+  <li><a href="#module-7-submission-guidelines">Submission Guidelines</a></li>
+</ol>
+</details>
 
 ---
 
@@ -1071,6 +1080,193 @@ npx hardhat compile
 - Check the [Hardhat Deployment Guide](https://hardhat.org/hardhat-runner/docs/guides/deploying)
 - Review [RSK Developer Portal](https://developers.rsk.co/)
 - Review the module-specific README: `module6/README.md`
+- Ask in the course discussion forum
+- Reach out to the DevX team
+
+<p align="right">(<a href="#table-of-contents">back to top</a>) ⬆️</p>
+
+---
+
+# Module 7: Verify Smart Contracts
+
+💡 **Learning Time**: 2-3 hours  
+📹 **Video Lessons**: Available on the platform  
+🎯 **Goal**: Learn to verify smart contracts on the Rootstock Explorer
+
+## Module 7 Overview
+
+In Module 7, you'll learn how to verify smart contracts on the Rootstock network. Contract verification is essential for transparency and allows users to interact directly with your contracts through the explorer interface.
+
+### What You'll Learn
+
+By completing this module, you will be able to:
+- Deploy smart contracts to Rootstock Testnet
+- Understand the importance of contract verification
+- Use Hardhat flatten to prepare source code for verification
+- Verify contracts on the Rootstock Explorer
+- Handle constructor arguments during verification
+
+### Contracts You'll Verify
+
+- **SimpleToken.sol**: ERC20 token contract
+- **PriceOracle.sol**: Oracle contract (no constructor args)
+- **NFTMarketplace.sol**: Marketplace contract with dependencies
+
+## Module 7 Exercise
+
+| Step | Task | Description | Difficulty |
+|------|------|-------------|------------|
+| 1 | Setup Environment | Install dependencies, configure `.env` | ⭐ |
+| 2 | Deploy to Testnet | Deploy all 3 contracts to RSK Testnet | ⭐⭐ |
+| 3 | Flatten Source Files | Generate flattened `.sol` files | ⭐ |
+| 4 | Verify on Explorer | Verify all 3 contracts on Rootstock Explorer | ⭐⭐⭐ |
+| 5 | Complete Assessment | Fill in `assessment/commands-and-outputs.md` | ⭐ |
+
+## Module 7 Verification Process
+
+### Step 1: Setup Environment
+
+```bash
+cd module7
+npm install
+
+# Create your .env file
+cp env.example .env
+# Add your private key to .env
+
+# Get tRBTC from: https://faucet.rsk.co/
+```
+
+### Step 2: Compile and Deploy
+
+```bash
+# Compile contracts
+npx hardhat compile
+
+# Deploy all contracts to RSK Testnet
+npx hardhat run scripts/03-deploy-multiple.ts --network rskTestnet
+```
+
+> 📝 **Save the deployed addresses!** You'll need them for verification.
+
+### Step 3: Flatten Source Files
+
+```bash
+npx hardhat flatten contracts/SimpleToken.sol > SimpleToken-flat.sol
+npx hardhat flatten contracts/PriceOracle.sol > PriceOracle-flat.sol
+npx hardhat flatten contracts/NFTMarketplace.sol > NFTMarketplace-flat.sol
+```
+
+### Step 4: Verify on Rootstock Explorer
+
+For each deployed contract:
+
+1. Go to the [Rootstock Testnet Explorer](https://explorer.testnet.rootstock.io/)
+2. Search for your contract address
+3. Click on the **"Contract"** tab
+4. Click **"Verify Contract"**
+5. Fill in the verification form:
+
+| Field | Value |
+|-------|-------|
+| Contract Address | Your deployed address |
+| Contract Name | `SimpleToken` / `PriceOracle` / `NFTMarketplace` |
+| Compiler Version | `v0.8.20` |
+| EVM Version | `paris` |
+| Optimization | `No` |
+| Source Code | Paste the flattened `.sol` file contents |
+
+### Constructor Arguments
+
+| Contract | Constructor Arguments |
+|----------|----------------------|
+| SimpleToken | `("MarketToken", "MKT", 1000000)` |
+| PriceOracle | None (leave empty) |
+| NFTMarketplace | `(<SimpleToken_address>)` |
+
+### Step 5: Complete Assessment
+
+Fill in `assessment/commands-and-outputs.md` with:
+- Verified contract URLs from Rootstock Explorer
+- Screenshots of verification (optional but recommended)
+
+## Verified Examples (Reference)
+
+These are example verified contracts you can reference:
+
+| Contract | Address | Explorer Link |
+|----------|---------|---------------|
+| SimpleToken | `0xeb08beae...` | [View on Explorer](https://explorer.testnet.rootstock.io/address/0xeb08beae69e2ab91724d5a1249ed84656b4b2d8e?tab=contract) |
+| PriceOracle | `0xc590cdbe...` | [View on Explorer](https://explorer.testnet.rootstock.io/address/0xc590cdbe869ac02652565d1c8ffd878173a4160f?tab=contract) |
+| NFTMarketplace | `0xa1ffc83f...` | [View on Explorer](https://explorer.testnet.rootstock.io/address/0xa1ffc83fee544e23b069c7e8fe29ece64938f518?tab=contract) |
+
+## Module 7 Submission Guidelines
+
+### Before Submitting
+
+- ✅ All three contracts deployed to Rootstock Testnet
+- ✅ All three contracts verified on the Rootstock Explorer
+- ✅ `assessment/commands-and-outputs.md` completed with valid Explorer URLs
+- ✅ Screenshots show successful verification (optional)
+
+### Submission Checklist
+
+```bash
+# 1. Create a branch following the naming convention: module7/your-username
+git checkout -b module7/your-username
+
+# 2. Verify your assessment file is complete
+cat module7/assessment/commands-and-outputs.md
+
+# 3. Check for any uncommitted changes
+git status
+
+# 4. Commit your work
+git add module7/
+git commit -m "Complete Module 7: Smart Contract Verification"
+
+# 5. Push to your fork
+git push origin module7/your-username
+
+# 6. Create Pull Request on GitHub to the parent repository
+# PR title must be: module7/your-username
+```
+
+**Remember**: Replace `your-username` with your course username or email address.
+
+### What We Check
+
+Your submission will be evaluated on:
+1. **Deployment**: All contracts deployed to RSK Testnet ✅
+2. **Verification**: All contracts verified on Explorer ✅
+3. **Documentation**: Assessment file contains valid URLs
+4. **Completeness**: All three contracts verified
+
+## Module 7 Troubleshooting
+
+### Deployment Fails
+
+- Ensure you have tRBTC in your wallet
+- Verify your private key is correct in `.env`
+- Check the RPC URL is accessible
+
+### Verification Fails
+
+- Ensure compiler version matches exactly (`v0.8.20`)
+- Use `paris` as EVM version
+- Disable optimization
+- Make sure constructor arguments are ABI-encoded correctly
+- Use the flattened source file, not the original
+
+### Constructor Arguments Encoding
+
+Use an [ABI Encoder Tool](https://abi.hashex.org/) to encode constructor arguments if needed.
+
+### Need More Help?
+
+- Check the [Rootstock Explorer Documentation](https://explorer.testnet.rootstock.io/)
+- Review the [Hardhat Flatten Guide](https://hardhat.org/hardhat-runner/docs/advanced/flattening)
+- Review the module-specific README: `module7/README.md`
 - Ask in the course discussion forum
 - Reach out to the DevX team
 
