@@ -18,33 +18,33 @@ describe("01-basic-deployment: Testing Contract Deployment", function () {
   });
 
   it("should initialize numCars to 0", async function () {
-    const Cars = await ethers.___("Cars");
-    const cars = await Cars.___;
-    await cars.___();
+    const Cars = await ethers.getContractFactory("Cars");
+    const cars = await Cars.deploy();
+    await cars.waitForDeployment();
     
     // Read the numCars state variable
-    const numCars = await cars.___();
+    const numCars = await cars.numCars();
     
     // Verify it's initialized to 0
-    ___(numCars).to.equal(___);
+    expect(numCars).to.equal(0);
   });
 
   it("should have a public numCars variable", async function () {
-    const Cars = await ethers.___("Cars");
-    const cars = await Cars.___;
-    await cars.___();
+    const Cars = await ethers.getContractFactory("Cars");
+    const cars = await Cars.deploy();
+    await cars.waitForDeployment();
     
     // Verify numCars is a function (public getter)
-    ___(cars.numCars).to.be.a("___");
+    expect(cars.numCars).to.be.a("function");
   });
 
   it("should have an addCar function", async function () {
-    const Cars = await ethers.___("Cars");
-    const cars = await Cars.___;
-    await cars.___();
+    const Cars = await ethers.getContractFactory("Cars");
+    const cars = await Cars.deploy();
+    await cars.waitForDeployment();
     
     // Verify addCar function exists
-    ___(cars.addCar).to.be.a("function");
+    expect(cars.addCar).to.be.a("function");
   });
 
 });
