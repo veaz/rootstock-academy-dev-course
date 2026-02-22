@@ -154,20 +154,26 @@
     "fnSig": "transfer(address,uint256)",
     "intrinsicGas": [
      21572,
-     21572
+     21572,
+     21560,
+     21560
     ],
     "callData": [
+     0,
+     0,
      0,
      0
     ],
     "gasData": [
+     52128,
+     52128,
      52140,
      52140
     ],
-    "numberOfCalls": 2,
-    "executionGasAverage": 52140,
+    "numberOfCalls": 4,
+    "executionGasAverage": 52134,
     "calldataGasAverage": 0,
-    "min": 52140,
+    "min": 52128,
     "max": 52140
    },
    "LunaToken_1296ee62": {
@@ -187,10 +193,35 @@
     "contract": "LunaToken",
     "method": "transferAndCall",
     "fnSig": "transferAndCall(address,uint256,bytes)",
-    "intrinsicGas": [],
-    "callData": [],
-    "gasData": [],
-    "numberOfCalls": 0
+    "intrinsicGas": [
+     22828,
+     22828,
+     22828,
+     22828,
+     22828,
+     22828
+    ],
+    "callData": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "gasData": [
+     114858,
+     114858,
+     119658,
+     119658,
+     163866,
+     163866
+    ],
+    "numberOfCalls": 6,
+    "executionGasAverage": 132794,
+    "calldataGasAverage": 0,
+    "min": 114858,
+    "max": 163866
    },
    "LunaToken_23b872dd": {
     "key": "23b872dd",
@@ -1280,8 +1311,19 @@
    },
    {
     "name": "ExploitOMP003",
-    "gasData": [],
-    "callData": []
+    "gasData": [
+     509415,
+     509415
+    ],
+    "callData": [
+     0,
+     0
+    ],
+    "executionGasAverage": 509415,
+    "calldataGasAverage": 0,
+    "min": 509415,
+    "max": 509415,
+    "percent": 0.8
    },
    {
     "name": "FIXED_OneMilNftPixels",
@@ -1377,18 +1419,18 @@
    {
     "name": "OneMilNftPixels",
     "gasData": [
-     3781713,
-     3781713
+     3850021,
+     3850021
     ],
     "callData": [
      0,
      0
     ],
-    "executionGasAverage": 3781713,
+    "executionGasAverage": 3850021,
     "calldataGasAverage": 0,
-    "min": 3781713,
-    "max": 3781713,
-    "percent": 6.3
+    "min": 3850021,
+    "max": 3850021,
+    "percent": 6.4
    },
    {
     "name": "Ownable",

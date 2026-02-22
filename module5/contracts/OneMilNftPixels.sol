@@ -251,6 +251,10 @@ contract OneMilNftPixels is ERC721, Ownable, IERC1363Receiver {
             bytes3 colour,
             uint256 amount
         ) = abi.decode(_data, (bytes4, address, uint24, bytes3, uint256));
+        require(
+            selector == this.buy.selector || selector == this.update.selector,
+            'Call of an unknown function'
+        );
         require(amount == _amount, 'Amount mismatch');
         require(newOwner == _sender, 'Sender mismatch');
         bytes memory callData = abi.encodeWithSelector(
